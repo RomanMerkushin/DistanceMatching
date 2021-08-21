@@ -11,9 +11,7 @@ void UAnimMod_DistanceCurve::OnApply_Implementation(UAnimSequence* AnimationSequ
 		return;
 	}
 
-	const bool bCurveExists = UAnimationBlueprintLibrary::DoesCurveExist(
-		AnimationSequence, CurveName, ERawCurveTrackTypes::RCT_Float
-	);
+	const bool bCurveExists = UAnimationBlueprintLibrary::DoesCurveExist(AnimationSequence, CurveName, ERawCurveTrackTypes::RCT_Float);
 
 	if (bCurveExists)
 	{
@@ -33,9 +31,7 @@ void UAnimMod_DistanceCurve::OnApply_Implementation(UAnimSequence* AnimationSequ
 		UAnimationBlueprintLibrary::GetTimeAtFrame(AnimationSequence, Frame, CurrentTime);
 		FVector CurrentLocation = GetRootBoneLocationAtFrame(AnimationSequence, Frame);
 
-		const float Distance = bIsStartAnimation
-			                       ? FVector::Distance(StartLocation, CurrentLocation)
-			                       : FVector::Distance(CurrentLocation, EndLocation) * -1.0f;
+		const float Distance = bIsStartAnimation ? FVector::Distance(StartLocation, CurrentLocation) : FVector::Distance(CurrentLocation, EndLocation) * -1.0f;
 
 		UAnimationBlueprintLibrary::AddFloatCurveKey(AnimationSequence, CurveName, CurrentTime, Distance);
 	}
@@ -51,7 +47,7 @@ void UAnimMod_DistanceCurve::OnRevert_Implementation(UAnimSequence* AnimationSeq
 	UAnimationBlueprintLibrary::RemoveCurve(AnimationSequence, CurveName, false);
 }
 
-FVector UAnimMod_DistanceCurve::GetRootBoneLocationAtFrame(UAnimSequence* AnimationSequence, const int32 Frame) const
+FVector UAnimMod_DistanceCurve::GetRootBoneLocationAtFrame(const UAnimSequence* AnimationSequence, const int32 Frame) const
 {
 	FTransform Pose;
 	UAnimationBlueprintLibrary::GetBonePoseForFrame(AnimationSequence, RootBoneName, Frame, true, Pose);

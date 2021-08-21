@@ -5,9 +5,7 @@
 #include "Animation/AnimInstanceProxy.h"
 #include "Animation/AnimCurveCompressionCodec_UniformIndexable.h"
 
-TAutoConsoleVariable<int32> CVarAnimNodeDistanceMatchingEnable(
-	TEXT("a.AnimNode.DistanceMatching.Enable"), 1, TEXT("Toggle Distance Matching")
-);
+TAutoConsoleVariable<int32> CVarAnimNodeDistanceMatchingEnable(TEXT("a.AnimNode.DistanceMatching.Enable"), 1, TEXT("Toggle Distance Matching"));
 
 float FAnimNode_DistanceMatching::GetCurrentAssetTime()
 {
@@ -49,11 +47,7 @@ void FAnimNode_DistanceMatching::Evaluate_AnyThread(FPoseContext& Output)
 	if (Sequence != nullptr && Output.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
 	{
 		FAnimationPoseData AnimationPoseData(Output);
-		Sequence->GetAnimationPose(
-			AnimationPoseData,
-			FAnimExtractContext(InternalTimeAccumulator,
-			Output.AnimInstanceProxy->ShouldExtractRootMotion())
-		);
+		Sequence->GetAnimationPose(AnimationPoseData, FAnimExtractContext(InternalTimeAccumulator, Output.AnimInstanceProxy->ShouldExtractRootMotion()));
 	}
 	else
 	{

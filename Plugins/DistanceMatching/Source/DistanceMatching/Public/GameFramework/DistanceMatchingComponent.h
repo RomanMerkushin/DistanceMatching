@@ -22,7 +22,7 @@ enum class EDistanceMatchingType : uint8
 	None,
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DISTANCEMATCHING_API UDistanceMatchingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -37,16 +37,16 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UCharacterMovementComponent> MovementComponent;
 
-	UPROPERTY(BlueprintReadOnly, Category="DistanceMatching")
+	UPROPERTY(BlueprintReadOnly, Category = "DistanceMatching")
 	bool bIsMoving;
 
-	UPROPERTY(BlueprintReadOnly, Category="DistanceMatching")
+	UPROPERTY(BlueprintReadOnly, Category = "DistanceMatching")
 	bool bIsAccelerating;
 
-	UPROPERTY(BlueprintReadOnly, Category="DistanceMatching")
+	UPROPERTY(BlueprintReadOnly, Category = "DistanceMatching")
 	float DistanceToMarker;
 
-	UPROPERTY(BlueprintReadOnly, Category="DistanceMatching")
+	UPROPERTY(BlueprintReadOnly, Category = "DistanceMatching")
 	EDistanceMatchingType DistanceMatchingType;
 
 private:
@@ -59,20 +59,20 @@ private:
 
 public:
 	/** Maximum simulation time for the stop location prediction. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DistanceMatching", meta=(ClampMin="0.1", ClampMax="5.0", UIMin="0.1", UIMax="5.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching", meta = (ClampMin = "0.1", ClampMax = "5.0", UIMin = "0.1", UIMax = "5.0"))
 	float MaxSimulationTime;
 
 	/** Clamping the DistanceToMarker value between +-MaxDistanceToMarker to prevent float overflow. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DistanceMatching")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching")
 	float MaxDistanceToMarker;
 
-	UPROPERTY(BlueprintAssignable, Category="DistanceMatching")
+	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
 	FOnMovingSignature OnMoving;
 
-	UPROPERTY(BlueprintAssignable, Category="DistanceMatching")
+	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
 	FOnStoppingSignature OnStopping;
 
-	UPROPERTY(BlueprintAssignable, Category="DistanceMatching")
+	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
 	FOnPivotingSignature OnPivoting;
 
 private:

@@ -20,22 +20,22 @@ private:
 
 public:
 	/** The animation sequence asset to play. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings", meta=(PinShownByDefault, DisallowedClasses="AnimMontage"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinShownByDefault, DisallowedClasses = "AnimMontage"))
 	TObjectPtr<UAnimSequenceBase> Sequence;
 
 	/** The distance value to search in curve. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings", meta=(PinShownByDefault))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinShownByDefault))
 	float Distance;
 
 	/** The name of the distance curve in animation sequence. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings", meta=(PinHiddenByDefault))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault))
 	FName DistanceCurveName;
 
 	/** Continue play animation as normal when distance limit is exceeded. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings", meta=(PinHiddenByDefault))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault))
 	bool bEnableDistanceLimit;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings", meta=(PinHiddenByDefault, EditCondition="bEnableDistanceLimit"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault, EditCondition = "bEnableDistanceLimit"))
 	float DistanceLimit;
 
 	FAnimNode_DistanceMatching()

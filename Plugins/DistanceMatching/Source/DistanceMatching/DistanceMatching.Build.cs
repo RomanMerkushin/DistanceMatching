@@ -4,7 +4,8 @@ using UnrealBuildTool;
 
 public class DistanceMatching : ModuleRules
 {
-	public DistanceMatching(ReadOnlyTargetRules Target) : base(Target)
+	public DistanceMatching(ReadOnlyTargetRules target)
+		: base(target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 

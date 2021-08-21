@@ -7,9 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #if ENABLE_DRAW_DEBUG
-TAutoConsoleVariable<int32> CVarDistanceMatchingComponentDebug(
-	TEXT("c.DistanceMatching.Debug"), 0, TEXT("Turn on debug for DistanceMatching component")
-);
+TAutoConsoleVariable<int32> CVarDistanceMatchingComponentDebug(TEXT("c.DistanceMatching.Debug"), 0, TEXT("Turn on debug for DistanceMatching component"));
 #endif
 
 UDistanceMatchingComponent::UDistanceMatchingComponent()
@@ -33,15 +31,11 @@ UDistanceMatchingComponent::UDistanceMatchingComponent()
 FVector UDistanceMatchingComponent::PredictStopLocation(const float DeltaTime) const
 {
 	const float MinTickTime = MovementComponent->MIN_TICK_TIME;
-	const float SimulationTimeStep = FMath::Min(
-		DeltaTime, MovementComponent->MaxSimulationTimeStep * Character->GetActorTimeDilation()
-	);
+	const float SimulationTimeStep = FMath::Min(DeltaTime, MovementComponent->MaxSimulationTimeStep * Character->GetActorTimeDilation());
 	// Subdivide braking to get reasonably consistent results at lower frame rates
 	// (important for packet loss situations w/networking)
 	const float MaxTimeStep = FMath::Clamp(MovementComponent->BrakingSubStepTime, 1.0f / 75.0f, 1.0f / 20.0f);
-	const float ActualBrakingFriction = MovementComponent->bUseSeparateBrakingFriction
-											? MovementComponent->BrakingFriction
-											: MovementComponent->GroundFriction;
+	const float ActualBrakingFriction = MovementComponent->bUseSeparateBrakingFriction ? MovementComponent->BrakingFriction : MovementComponent->GroundFriction;
 	const float FrictionFactor = FMath::Max(0.0f, MovementComponent->BrakingFrictionFactor);
 	const float Friction = FMath::Max(0.0f, ActualBrakingFriction * FrictionFactor);
 	const float BrakingDeceleration = FMath::Max(0.0f, MovementComponent->GetMaxBrakingDeceleration());
@@ -68,20 +62,16 @@ FVector UDistanceMatchingComponent::PredictStopLocation(const float DeltaTime) c
 
 			float RemainingTime = SimulationTimeStep;
 			// Decelerate to brake to a stop
-			const FVector ReverseAcceleration = bZeroBraking
-													? FVector::ZeroVector
-													: -BrakingDeceleration * PredictedVelocity.GetSafeNormal();
+			const FVector ReverseAcceleration = bZeroBraking ? FVector::ZeroVector : -BrakingDeceleration * PredictedVelocity.GetSafeNormal();
 
 			while (RemainingTime >= MinTickTime)
 			{
 				// Zero friction uses constant deceleration, so no need for iteration
-				const float DT = RemainingTime > MaxTimeStep && !bZeroFriction
-									? FMath::Min(MaxTimeStep, RemainingTime * 0.5f)
-									: RemainingTime;
+				const float DT = RemainingTime > MaxTimeStep && !bZeroFriction ? FMath::Min(MaxTimeStep, RemainingTime * 0.5f) : RemainingTime;
 				RemainingTime -= DT;
 
 				// Apply friction and braking
-				PredictedVelocity = PredictedVelocity + (-Friction * PredictedVelocity + ReverseAcceleration) * DT ;
+				PredictedVelocity = PredictedVelocity + (-Friction * PredictedVelocity + ReverseAcceleration) * DT;
 
 				// Don't reverse direction
 				if ((PredictedVelocity | PreviousVelocity) <= 0.0f)

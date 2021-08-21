@@ -42,7 +42,7 @@ void UAnimGraphNode_DistanceMatching::ValidateAnimNodeDuringCompilation(USkeleto
 	{
 		// Check for bindings
 		bool bHasBinding = false;
-		if(SequencePin != nullptr)
+		if (SequencePin != nullptr)
 		{
 			if (PropertyBindings.Find(SequencePin->GetFName()))
 			{
@@ -56,15 +56,12 @@ void UAnimGraphNode_DistanceMatching::ValidateAnimNodeDuringCompilation(USkeleto
 			MessageLog.Error(TEXT("@@ references an unknown sequence"), this);
 		}
 	}
-	else if(SupportsAssetClass(SequenceToCheck->GetClass()) == EAnimAssetHandlerType::NotSupported)
+	else if (SupportsAssetClass(SequenceToCheck->GetClass()) == EAnimAssetHandlerType::NotSupported)
 	{
-		MessageLog.Error(
-			*FText::Format(
-				LOCTEXT("UnsupportedAssetError", "@@ is trying to play a {0} as a sequence, which is not allowed."),
-				SequenceToCheck->GetClass()->GetDisplayNameText()
-			).ToString(),
-			this
-		);
+		const FText SequenceDisplayName = SequenceToCheck->GetClass()->GetDisplayNameText();
+		const FText ErrorMessage = FText::Format(
+			LOCTEXT("UnsupportedAssetError", "@@ is trying to play a {0} as a sequence, which is not allowed."), SequenceDisplayName);
+		MessageLog.Error(*ErrorMessage.ToString(), this);
 	}
 	else
 	{

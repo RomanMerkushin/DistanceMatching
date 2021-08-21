@@ -8,12 +8,12 @@
 #include "AnimGraphNode_DistanceMatching.generated.h"
 
 UCLASS(MinimalAPI)
-class UAnimGraphNode_DistanceMatching: public UAnimGraphNode_AssetPlayerBase
+class UAnimGraphNode_DistanceMatching : public UAnimGraphNode_AssetPlayerBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category="Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings")
 	FAnimNode_DistanceMatching Node;
 
 	// UEdGraphNode interface

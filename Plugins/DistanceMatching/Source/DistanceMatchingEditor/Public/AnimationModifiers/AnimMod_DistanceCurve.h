@@ -12,13 +12,13 @@ class DISTANCEMATCHINGEDITOR_API UAnimMod_DistanceCurve : public UAnimationModif
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category="Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings")
 	FName RootBoneName;
 
-	UPROPERTY(EditAnywhere, Category="Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings")
 	FName CurveName;
 
-	UPROPERTY(EditAnywhere, Category="Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings")
 	bool bIsStartAnimation;
 
 	UAnimMod_DistanceCurve()
@@ -32,5 +32,5 @@ public:
 	virtual void OnRevert_Implementation(UAnimSequence* AnimationSequence) override;
 
 private:
-	FVector GetRootBoneLocationAtFrame(UAnimSequence* AnimationSequence, int32 Frame) const;
+	FVector GetRootBoneLocationAtFrame(const UAnimSequence* AnimationSequence, const int32 Frame) const;
 };
