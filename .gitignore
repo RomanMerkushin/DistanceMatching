@@ -1,0 +1,14 @@
+# IDE project files
+.vs/
+.idea/
+*.sln
+
+# Project files not related to the plugin
+Config/
+Content/
+Intermediate/
+/Source/
+*.uproject
+
+# Rider plugin
+Plugins/Developer/
