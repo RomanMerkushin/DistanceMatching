@@ -16,3 +16,6 @@ SpacesInAngles:                                 false
 ColumnLimit:                                    0
 SpacesBeforeTrailingComments:                   2
 IndentCaseLabels:                               true
+AccessModifierOffset:                           -4
+PointerAlignment:                               Left
+SortIncludes:                                   false
