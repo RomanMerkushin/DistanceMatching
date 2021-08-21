@@ -8,6 +8,7 @@ Config/
 Content/
 Intermediate/
 /Source/
+Binaries/
 *.uproject
 
 # Rider plugin
