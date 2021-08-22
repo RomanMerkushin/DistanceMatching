@@ -210,8 +210,8 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 #endif
 
 	DistanceToMarker = DistanceMatchingType == EDistanceMatchingType::None
-						? 0.0f
-						: FMath::Clamp(FVector::Distance(ActorLocation, MarkerLocation), -MaxDistanceToMarker, MaxDistanceToMarker);
+						   ? 0.0f
+						   : FMath::Clamp(FVector::Distance(ActorLocation, MarkerLocation), -MaxDistanceToMarker, MaxDistanceToMarker);
 
 	if (DistanceMatchingType == EDistanceMatchingType::Stop || DistanceMatchingType == EDistanceMatchingType::Pivot)
 	{
