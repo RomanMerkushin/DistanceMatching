@@ -22,7 +22,7 @@ UDistanceMatchingComponent::UDistanceMatchingComponent()
 	, PreviousAccelerationSize(0.0f)
 	, MarkerLocation(FVector::ZeroVector)
 	, MaxSimulationTime(2.0f)
-	, MaxDistanceToMarker(100.0f)
+	, MaxDistanceToMarker(1000.0f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	bWantsInitializeComponent = true;

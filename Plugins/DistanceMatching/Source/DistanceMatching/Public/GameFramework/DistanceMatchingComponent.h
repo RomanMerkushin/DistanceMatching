@@ -66,13 +66,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching")
 	float MaxDistanceToMarker;
 
-	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
+	/** Trigger: Started moving and accelerating. */
+	UPROPERTY(BlueprintAssignable)
 	FOnMovingSignature OnMoving;
 
-	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
+	/** Trigger: Was moving and stopped accelerating. */
+	UPROPERTY(BlueprintAssignable)
 	FOnStoppingSignature OnStopping;
 
-	UPROPERTY(BlueprintAssignable, Category = "DistanceMatching")
+	/** Trigger: Acceleration direction is ~ opposite of velocity. */
+	UPROPERTY(BlueprintAssignable)
 	FOnPivotingSignature OnPivoting;
 
 private:
