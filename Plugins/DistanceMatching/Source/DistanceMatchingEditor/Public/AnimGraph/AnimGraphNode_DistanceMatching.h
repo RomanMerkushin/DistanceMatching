@@ -16,6 +16,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	FAnimNode_DistanceMatching Node;
 
+private:
+	FNodeTextCache CachedNodeTitle;
+
+public:
 	// UEdGraphNode interface
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual FText GetTooltipText() const override;
@@ -36,4 +40,7 @@ public:
 	// UAnimGraphNode_AssetPlayerBase interface
 	virtual void SetAnimationAsset(UAnimationAsset* Asset) override;
 	// End of UAnimGraphNode_AssetPlayerBase interface
+
+private:
+	FText GetNodeTitleForSequence(ENodeTitleType::Type TitleType, UAnimSequenceBase* InSequence) const;
 };

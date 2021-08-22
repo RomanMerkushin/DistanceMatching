@@ -9,17 +9,39 @@
 
 FLinearColor UAnimGraphNode_DistanceMatching::GetNodeTitleColor() const
 {
-	return FColor(200, 100, 100);
+	return FLinearColor::Black;
 }
 
 FText UAnimGraphNode_DistanceMatching::GetTooltipText() const
 {
-	return FText::FromString("Distance Matching");
+	return CachedNodeTitle;
 }
 
-FText UAnimGraphNode_DistanceMatching::GetNodeTitle(ENodeTitleType::Type TitleType) const
+FText UAnimGraphNode_DistanceMatching::GetNodeTitle(const ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString("Distance Matching");
+	if (Node.Sequence == nullptr)
+	{
+		// We may have a valid variable connected or default pin value
+		UEdGraphPin* SequencePin = FindPin(GET_MEMBER_NAME_STRING_CHECKED(FAnimNode_DistanceMatching, Sequence));
+		if (SequencePin && SequencePin->LinkedTo.Num() > 0)
+		{
+			CachedNodeTitle.SetCachedText(LOCTEXT("DistanceMatching_TitleVariable", "Distance Matching"), this);
+		}
+		else if (SequencePin && SequencePin->DefaultObject != nullptr)
+		{
+			GetNodeTitleForSequence(TitleType, CastChecked<UAnimSequenceBase>(SequencePin->DefaultObject));
+		}
+		else
+		{
+			CachedNodeTitle.SetCachedText(LOCTEXT("DistanceMatching_TitleNONE", "Distance Matching (None)"), this);
+		}
+	}
+	else
+	{
+		GetNodeTitleForSequence(TitleType, Node.Sequence);
+	}
+
+	return CachedNodeTitle;
 }
 
 FText UAnimGraphNode_DistanceMatching::GetMenuCategory() const
@@ -121,6 +143,17 @@ void UAnimGraphNode_DistanceMatching::SetAnimationAsset(UAnimationAsset* Asset)
 	{
 		Node.Sequence = Seq;
 	}
+}
+
+FText UAnimGraphNode_DistanceMatching::GetNodeTitleForSequence(ENodeTitleType::Type TitleType, UAnimSequenceBase* InSequence) const
+{
+	const FText SequenceName = FText::FromString(InSequence->GetName());
+
+	FFormatNamedArguments Args;
+	Args.Add(TEXT("SequenceName"), SequenceName);
+	CachedNodeTitle.SetCachedText(FText::Format(LOCTEXT("DistanceMatching", "Distance Matching: {SequenceName}"), Args), this);
+
+	return CachedNodeTitle;
 }
 
 #undef LOCTEXT_NAMESPACE
