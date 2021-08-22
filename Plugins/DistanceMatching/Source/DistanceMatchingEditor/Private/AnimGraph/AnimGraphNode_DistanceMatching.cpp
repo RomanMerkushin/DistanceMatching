@@ -29,7 +29,7 @@ FText UAnimGraphNode_DistanceMatching::GetNodeTitle(const ENodeTitleType::Type T
 		}
 		else if (SequencePin && SequencePin->DefaultObject != nullptr)
 		{
-			GetNodeTitleForSequence(TitleType, CastChecked<UAnimSequenceBase>(SequencePin->DefaultObject));
+			UpdateNodeTitleForSequence(TitleType, CastChecked<UAnimSequenceBase>(SequencePin->DefaultObject));
 		}
 		else
 		{
@@ -38,7 +38,7 @@ FText UAnimGraphNode_DistanceMatching::GetNodeTitle(const ENodeTitleType::Type T
 	}
 	else
 	{
-		GetNodeTitleForSequence(TitleType, Node.Sequence);
+		UpdateNodeTitleForSequence(TitleType, Node.Sequence);
 	}
 
 	return CachedNodeTitle;
@@ -96,6 +96,13 @@ void UAnimGraphNode_DistanceMatching::ValidateAnimNodeDuringCompilation(USkeleto
 	}
 }
 
+void UAnimGraphNode_DistanceMatching::PreloadRequiredAssets()
+{
+	PreloadObject(Node.Sequence);
+
+	Super::PreloadRequiredAssets();
+}
+
 void UAnimGraphNode_DistanceMatching::BakeDataDuringCompilation(FCompilerResultsLog& MessageLog)
 {
 	UAnimBlueprint* AnimBlueprint = GetAnimBlueprint();
@@ -127,6 +134,19 @@ UScriptStruct* UAnimGraphNode_DistanceMatching::GetTimePropertyStruct() const
 	return FAnimNode_DistanceMatching::StaticStruct();
 }
 
+void UAnimGraphNode_DistanceMatching::GetAllAnimationSequencesReferred(TArray<UAnimationAsset*>& AnimationAssets) const
+{
+	if (Node.Sequence)
+	{
+		HandleAnimReferenceCollection(Node.Sequence, AnimationAssets);
+	}
+}
+
+void UAnimGraphNode_DistanceMatching::ReplaceReferredAnimations(const TMap<UAnimationAsset*, UAnimationAsset*>& AnimAssetReplacementMap)
+{
+	HandleAnimReferenceReplacement(Node.Sequence, AnimAssetReplacementMap);
+}
+
 EAnimAssetHandlerType UAnimGraphNode_DistanceMatching::SupportsAssetClass(const UClass* AssetClass) const
 {
 	if (AssetClass->IsChildOf(UAnimSequence::StaticClass()) || AssetClass->IsChildOf(UAnimComposite::StaticClass()))
@@ -145,15 +165,14 @@ void UAnimGraphNode_DistanceMatching::SetAnimationAsset(UAnimationAsset* Asset)
 	}
 }
 
-FText UAnimGraphNode_DistanceMatching::GetNodeTitleForSequence(ENodeTitleType::Type TitleType, UAnimSequenceBase* InSequence) const
+void UAnimGraphNode_DistanceMatching::UpdateNodeTitleForSequence(ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const
 {
 	const FText SequenceName = FText::FromString(InSequence->GetName());
 
 	FFormatNamedArguments Args;
 	Args.Add(TEXT("SequenceName"), SequenceName);
-	CachedNodeTitle.SetCachedText(FText::Format(LOCTEXT("DistanceMatching", "Distance Matching: {SequenceName}"), Args), this);
 
-	return CachedNodeTitle;
+	CachedNodeTitle.SetCachedText(FText::Format(LOCTEXT("DistanceMatching", "Distance Matching: {SequenceName}"), Args), this);
 }
 
 #undef LOCTEXT_NAMESPACE
