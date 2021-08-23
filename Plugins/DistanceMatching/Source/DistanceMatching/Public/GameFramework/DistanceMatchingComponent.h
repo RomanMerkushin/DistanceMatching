@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DistanceMatchingComponent.generated.h"
 
 class UDistanceMatchingComponent;
@@ -37,6 +38,9 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UCharacterMovementComponent> MovementComponent;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UCapsuleComponent> CapsuleComponent;
+
 	UPROPERTY(BlueprintReadOnly, Category = "DistanceMatching")
 	bool bIsMoving;
 
@@ -56,6 +60,8 @@ private:
 	FVector Acceleration;
 	float PreviousAccelerationSize;
 	FVector MarkerLocation;
+	float CapsuleHalfHeight;
+	float DistanceToFloor;
 
 public:
 	/** Maximum simulation time for the stop location prediction. */
@@ -65,6 +71,14 @@ public:
 	/** Clamping the DistanceToMarker value between +-MaxDistanceToMarker to prevent float overflow. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching")
 	float MaxDistanceToMarker;
+
+	/** Channel for all kind of traces used for distance matching. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching")
+	TEnumAsByte<ETraceTypeQuery> TraceChannel;
+
+	/** Half height of sphere trace for Z value correction when predicting stop location on a slope. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching")
+	float StopLocationTraceHalfHeight;
 
 	/** Trigger: Started moving and accelerating. */
 	UPROPERTY(BlueprintAssignable)

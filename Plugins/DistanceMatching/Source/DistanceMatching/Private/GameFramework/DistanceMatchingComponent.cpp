@@ -21,8 +21,12 @@ UDistanceMatchingComponent::UDistanceMatchingComponent()
 	, Acceleration(FVector::ZeroVector)
 	, PreviousAccelerationSize(0.0f)
 	, MarkerLocation(FVector::ZeroVector)
+	, CapsuleHalfHeight(0.0f)
+	, DistanceToFloor(0.0f)
 	, MaxSimulationTime(2.0f)
 	, MaxDistanceToMarker(1000.0f)
+	, TraceChannel(TraceTypeQuery1)
+	, StopLocationTraceHalfHeight(150.0f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	bWantsInitializeComponent = true;
@@ -57,7 +61,7 @@ FVector UDistanceMatchingComponent::PredictStopLocation(const float DeltaTime) c
 		{
 			if (PredictedVelocity.IsZero() || bZeroFriction && bZeroBraking || SimulationTimeStep < MinTickTime)
 			{
-				return PredictedLocation;
+				break;
 			}
 
 			float RemainingTime = SimulationTimeStep;
@@ -84,7 +88,7 @@ FVector UDistanceMatchingComponent::PredictStopLocation(const float DeltaTime) c
 			const float VelocitySizeSquared = PredictedVelocity.SizeSquared();
 			if (VelocitySizeSquared <= KINDA_SMALL_NUMBER || !bZeroBraking && VelocitySizeSquared <= FMath::Square(BrakeToStopVelocity))
 			{
-				return PredictedLocation;
+				break;
 			}
 		}
 		else
@@ -103,8 +107,24 @@ FVector UDistanceMatchingComponent::PredictStopLocation(const float DeltaTime) c
 
 		if ((PredictedVelocity | PreviousVelocity) <= 0.0f)
 		{
-			return PredictedLocation;
+			break;
 		}
+	}
+
+	FHitResult HitResult;
+	const FVector StartTrace = FVector(PredictedLocation.X, PredictedLocation.Y, PredictedLocation.Z + StopLocationTraceHalfHeight);
+	const FVector EndTrace = FVector(PredictedLocation.X, PredictedLocation.Y, PredictedLocation.Z - StopLocationTraceHalfHeight);
+	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(1.0f);
+
+	const ECollisionChannel CollisionChannel = UEngineTypes::ConvertToCollisionChannel(TraceChannel);
+	FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+
+	const UWorld* World = GetWorld();
+	const bool bHit = World ? World->SweepSingleByChannel(HitResult, StartTrace, EndTrace, FQuat::Identity, CollisionChannel, CollisionShape) : false;
+
+	if (bHit)
+	{
+		return FVector(HitResult.Location.X, HitResult.Location.Y, HitResult.Location.Z + CapsuleHalfHeight + DistanceToFloor);
 	}
 
 	return PredictedLocation;
@@ -115,11 +135,13 @@ void UDistanceMatchingComponent::InitializeComponent()
 	Super::InitializeComponent();
 
 	Character = Cast<ACharacter>(GetOwner());
-	MovementComponent = IsValid(Character) ? Character->GetCharacterMovement() : nullptr;
 
-	if (!MovementComponent)
+	MovementComponent = IsValid(Character) ? Character->GetCharacterMovement() : nullptr;
+	CapsuleComponent = IsValid(Character) ? Character->GetCapsuleComponent() : nullptr;
+
+	if (!MovementComponent || !CapsuleComponent)
 	{
-		UE_LOG(LogDistanceMatching, Error, TEXT("Can't access CharacterMovement component. DistanceMatching plugin will be disabled!"));
+		UE_LOG(LogDistanceMatching, Error, TEXT("Can't access character components. DistanceMatching plugin will be disabled!"));
 		PrimaryComponentTick.bCanEverTick = false;
 		return;
 	}
@@ -135,6 +157,8 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 	ActorLocation = Character->GetActorLocation();
 	Velocity = MovementComponent->Velocity;
 	Acceleration = MovementComponent->GetCurrentAcceleration();
+	CapsuleHalfHeight = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	DistanceToFloor = MovementComponent->CurrentFloor.FloorDist;
 
 	const float VelocitySize = Velocity.Size();
 	const float AccelerationSize = Acceleration.Size();
