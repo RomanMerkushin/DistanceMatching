@@ -13,10 +13,28 @@ struct DISTANCEMATCHING_API FAnimNode_DistanceMatching : public FAnimNode_AssetP
 {
 	GENERATED_BODY()
 
+	FAnimNode_DistanceMatching();
+
+	// FAnimNode_AssetPlayerBase interface
+	virtual float GetCurrentAssetTime() override { return InternalTimeAccumulator; }
+	virtual float GetCurrentAssetLength() override;
+	virtual UAnimationAsset* GetAnimAsset() override { return Sequence; }
+	// End of FAnimNode_AssetPlayerBase interface
+
+	// FAnimNode_Base interface
+	virtual bool NeedsOnInitializeAnimInstance() const override { return true; }
+	virtual void OnInitializeAnimInstance(const FAnimInstanceProxy* InProxy, const UAnimInstance* InAnimInstance) override;
+	virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
+	virtual void Evaluate_AnyThread(FPoseContext& Output) override;
+	virtual void OverrideAsset(UAnimationAsset* NewAsset) override;
+	virtual void UpdateAssetPlayer(const FAnimationUpdateContext& Context) override;
+	// End of FAnimNode_Base interface
+
 private:
 	TSharedPtr<FAnimCurveBufferAccess> CurveBuffer;
 	int32 CurveBufferNumSamples;
 	TObjectPtr<UAnimSequenceBase> PrevSequence;
+	uint8 bIsEnabled : 1;
 
 public:
 	/** The animation sequence asset to play. */
@@ -35,37 +53,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault))
 	bool bEnableDistanceLimit;
 
+	/** Distance matching limit. See bEnableDistanceLimit. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault, EditCondition = "bEnableDistanceLimit"))
 	float DistanceLimit;
 
-	FAnimNode_DistanceMatching()
-		: CurveBufferNumSamples(0)
-		, PrevSequence(nullptr)
-		, Sequence(nullptr)
-		, Distance(0.0f)
-		, DistanceCurveName(FName("Distance"))
-		, bEnableDistanceLimit(false)
-		, DistanceLimit(0.0f)
-	{
-	}
-
-	// FAnimNode_AssetPlayerBase interface
-	virtual float GetCurrentAssetTime() override;
-	virtual float GetCurrentAssetLength() override;
-	virtual UAnimationAsset* GetAnimAsset() override { return Sequence; }
-	// End of FAnimNode_AssetPlayerBase interface
-
-	// FAnimNode_Base interface
-	virtual bool NeedsOnInitializeAnimInstance() const override { return true; }
-	virtual void OnInitializeAnimInstance(const FAnimInstanceProxy* InProxy, const UAnimInstance* InAnimInstance) override;
-	virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
-	virtual void Evaluate_AnyThread(FPoseContext& Output) override;
-	virtual void OverrideAsset(UAnimationAsset* NewAsset) override;
-	virtual void UpdateAssetPlayer(const FAnimationUpdateContext& Context) override;
-	// End of FAnimNode_Base interface
-
 private:
+	/** Update curve buffer from sequence by curve name. */
 	void UpdateCurveBuffer();
+
+	/** Returns the time of a named curve for corresponding distance value. */
 	float GetCurveTime() const;
+
+	/** Play animation sequence. */
 	void PlaySequence(const FAnimationUpdateContext& Context);
 };

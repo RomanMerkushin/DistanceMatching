@@ -5,11 +5,28 @@
 #include "Animation/AnimInstanceProxy.h"
 #include "Animation/AnimCurveCompressionCodec_UniformIndexable.h"
 
-TAutoConsoleVariable<int32> CVarAnimNodeDistanceMatchingEnable(TEXT("a.AnimNode.DistanceMatching.Enable"), 1, TEXT("Toggle Distance Matching"));
-
-float FAnimNode_DistanceMatching::GetCurrentAssetTime()
+#if ENABLE_ANIM_DEBUG
+namespace DistanceMatchingCVars
 {
-	return InternalTimeAccumulator;
+	static int32 AnimNodeEnable = 0;
+	FAutoConsoleVariableRef CVarAnimNodeEnable(
+		TEXT("a.AnimNode.DistanceMatching.Enable"),
+		AnimNodeEnable,
+		TEXT("Turn on debug for DistanceMatching AnimNode."),
+		ECVF_Default);
+}  // namespace DistanceMatchingCVars
+#endif
+
+FAnimNode_DistanceMatching::FAnimNode_DistanceMatching()
+	: CurveBufferNumSamples(0)
+	, PrevSequence(nullptr)
+	, bIsEnabled(true)
+	, Sequence(nullptr)
+	, Distance(0.0f)
+	, DistanceCurveName(FName("Distance"))
+	, bEnableDistanceLimit(false)
+	, DistanceLimit(0.0f)
+{
 }
 
 float FAnimNode_DistanceMatching::GetCurrentAssetLength()
@@ -67,14 +84,17 @@ void FAnimNode_DistanceMatching::UpdateAssetPlayer(const FAnimationUpdateContext
 {
 	GetEvaluateGraphExposedInputs().Execute(Context);
 
+#if ENABLE_ANIM_DEBUG
+	bIsEnabled = DistanceMatchingCVars::AnimNodeEnable == 1;
+#endif
+
 	if (Sequence != nullptr && Context.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
 	{
-		const bool bIsEnabled = CVarAnimNodeDistanceMatchingEnable.GetValueOnAnyThread() == 1;
 		if (bIsEnabled)
 		{
 			if (!CurveBuffer.IsValid())
 			{
-				UE_LOG(LogDistanceMatching, Error, TEXT("CurveBuffer is nullptr"));
+				UE_LOG(LogDistanceMatching, Error, TEXT("CurveBuffer is nullptr!"));
 				return;
 			}
 
@@ -84,7 +104,7 @@ void FAnimNode_DistanceMatching::UpdateAssetPlayer(const FAnimationUpdateContext
 			}
 			else
 			{
-				InternalTimeAccumulator = FMath::Clamp(GetCurveTime(), 0.f, Sequence->GetPlayLength());
+				InternalTimeAccumulator = FMath::Clamp(GetCurveTime(), 0.0f, Sequence->GetPlayLength());
 			}
 		}
 		else
@@ -102,7 +122,7 @@ void FAnimNode_DistanceMatching::UpdateCurveBuffer()
 
 	if (!CurveSmartName.IsValid())
 	{
-		UE_LOG(LogDistanceMatching, Error, TEXT("Can't retrieve curve smart name for %s"), *DistanceCurveName.ToString());
+		UE_LOG(LogDistanceMatching, Error, TEXT("Can't retrieve curve smart name for %s."), *DistanceCurveName.ToString());
 		return;
 	}
 
@@ -110,7 +130,7 @@ void FAnimNode_DistanceMatching::UpdateCurveBuffer()
 	CurveBuffer = MakeShareable(new FAnimCurveBufferAccess(Sequence, CurveSmartName.UID));
 	if (!CurveBuffer->IsValid())
 	{
-		UE_LOG(LogDistanceMatching, Error, TEXT("Can't access to curve buffer by smart name: %s"), *CurveSmartName.DisplayName.ToString());
+		UE_LOG(LogDistanceMatching, Error, TEXT("Can't access to curve buffer by smart name: %s."), *CurveSmartName.DisplayName.ToString());
 		return;
 	}
 
