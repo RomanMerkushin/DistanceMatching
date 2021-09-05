@@ -21,9 +21,9 @@ private:
 
 public:
 	// UEdGraphNode interface
-	virtual FLinearColor GetNodeTitleColor() const override;
-	virtual FText GetTooltipText() const override;
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+	virtual FLinearColor GetNodeTitleColor() const override { return FLinearColor::Black; }
+	virtual FText GetTooltipText() const override { return CachedNodeTitle; }
+	virtual FText GetNodeTitle(const ENodeTitleType::Type TitleType) const override;
 	virtual FText GetMenuCategory() const override;
 	// End of UEdGraphNode interface
 
@@ -45,5 +45,5 @@ public:
 	// End of UAnimGraphNode_AssetPlayerBase interface
 
 private:
-	void UpdateNodeTitleForSequence(ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const;
+	void UpdateNodeTitleForSequence(const ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const;
 };

@@ -7,16 +7,6 @@
 
 #define LOCTEXT_NAMESPACE "AnimGraphNode_DistanceMatching"
 
-FLinearColor UAnimGraphNode_DistanceMatching::GetNodeTitleColor() const
-{
-	return FLinearColor::Black;
-}
-
-FText UAnimGraphNode_DistanceMatching::GetTooltipText() const
-{
-	return CachedNodeTitle;
-}
-
 FText UAnimGraphNode_DistanceMatching::GetNodeTitle(const ENodeTitleType::Type TitleType) const
 {
 	if (Node.Sequence == nullptr)
@@ -165,7 +155,7 @@ void UAnimGraphNode_DistanceMatching::SetAnimationAsset(UAnimationAsset* Asset)
 	}
 }
 
-void UAnimGraphNode_DistanceMatching::UpdateNodeTitleForSequence(ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const
+void UAnimGraphNode_DistanceMatching::UpdateNodeTitleForSequence(const ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const
 {
 	const FText SequenceName = FText::FromString(InSequence->GetName());
 
