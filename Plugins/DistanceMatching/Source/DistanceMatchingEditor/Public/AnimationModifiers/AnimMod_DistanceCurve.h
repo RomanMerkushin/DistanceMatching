@@ -21,12 +21,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	bool bIsStartAnimation;
 
-	UAnimMod_DistanceCurve()
-		: RootBoneName(FName("root"))
-		, CurveName(FName("Distance"))
-		, bIsStartAnimation(false)
-	{
-	}
+	UAnimMod_DistanceCurve();
 
 	virtual void OnApply_Implementation(UAnimSequence* AnimationSequence) override;
 	virtual void OnRevert_Implementation(UAnimSequence* AnimationSequence) override;

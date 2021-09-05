@@ -4,6 +4,13 @@
 #include "Animation/AnimSequence.h"
 #include "AnimationBlueprintLibrary.h"
 
+UAnimMod_DistanceCurve::UAnimMod_DistanceCurve()
+	: RootBoneName(FName("root"))
+	, CurveName(FName("Distance"))
+	, bIsStartAnimation(false)
+{
+}
+
 void UAnimMod_DistanceCurve::OnApply_Implementation(UAnimSequence* AnimationSequence)
 {
 	if (!AnimationSequence)
