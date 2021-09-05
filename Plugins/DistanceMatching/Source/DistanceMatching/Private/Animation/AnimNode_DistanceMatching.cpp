@@ -8,7 +8,7 @@
 #if ENABLE_ANIM_DEBUG
 namespace DistanceMatchingCVars
 {
-	static int32 AnimNodeEnable = 0;
+	static int32 AnimNodeEnable = 1;
 	FAutoConsoleVariableRef CVarAnimNodeEnable(
 		TEXT("a.AnimNode.DistanceMatching.Enable"),
 		AnimNodeEnable,
