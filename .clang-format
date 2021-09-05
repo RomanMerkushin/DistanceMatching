@@ -19,3 +19,4 @@ IndentCaseLabels:                               true
 AccessModifierOffset:                           -4
 PointerAlignment:                               Left
 SortIncludes:                                   false
+NamespaceIndentation:                           All
