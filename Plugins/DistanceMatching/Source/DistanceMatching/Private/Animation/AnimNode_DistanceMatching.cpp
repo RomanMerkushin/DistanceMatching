@@ -34,25 +34,13 @@ float FAnimNode_DistanceMatching::GetCurrentAssetLength()
 	return Sequence ? Sequence->GetPlayLength() : 0.0f;
 }
 
-void FAnimNode_DistanceMatching::OnInitializeAnimInstance(const FAnimInstanceProxy* InProxy, const UAnimInstance* InAnimInstance)
-{
-	FAnimNode_AssetPlayerBase::OnInitializeAnimInstance(InProxy, InAnimInstance);
-
-	PrevSequence = Sequence;
-
-	// Caching CurveBuffer
-	UpdateCurveBuffer();
-}
-
 void FAnimNode_DistanceMatching::Initialize_AnyThread(const FAnimationInitializeContext& Context)
 {
 	FAnimNode_AssetPlayerBase::Initialize_AnyThread(Context);
 	GetEvaluateGraphExposedInputs().Execute(Context);
 
-	InternalTimeAccumulator = 0.0f;
-
-	// Update CurveBuffer if sequence is changed
-	if (Sequence && Sequence != PrevSequence)
+	// Update CurveBuffer if sequence is changed or is nullptr
+	if (!Sequence || Sequence && Sequence != PrevSequence)
 	{
 		PrevSequence = Sequence;
 		UpdateCurveBuffer();
@@ -61,7 +49,7 @@ void FAnimNode_DistanceMatching::Initialize_AnyThread(const FAnimationInitialize
 
 void FAnimNode_DistanceMatching::Evaluate_AnyThread(FPoseContext& Output)
 {
-	if (Sequence != nullptr && Output.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
+	if (Sequence && Output.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
 	{
 		FAnimationPoseData AnimationPoseData(Output);
 		Sequence->GetAnimationPose(AnimationPoseData, FAnimExtractContext(InternalTimeAccumulator, Output.AnimInstanceProxy->ShouldExtractRootMotion()));
@@ -88,7 +76,7 @@ void FAnimNode_DistanceMatching::UpdateAssetPlayer(const FAnimationUpdateContext
 	bIsEnabled = DistanceMatchingCVars::AnimNodeEnable == 1;
 #endif
 
-	if (Sequence != nullptr && Context.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
+	if (Sequence && Context.AnimInstanceProxy->IsSkeletonCompatible(Sequence->GetSkeleton()))
 	{
 		if (bIsEnabled)
 		{

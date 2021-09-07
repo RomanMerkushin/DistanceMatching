@@ -22,8 +22,6 @@ struct DISTANCEMATCHING_API FAnimNode_DistanceMatching : public FAnimNode_AssetP
 	// End of FAnimNode_AssetPlayerBase interface
 
 	// FAnimNode_Base interface
-	virtual bool NeedsOnInitializeAnimInstance() const override { return true; }
-	virtual void OnInitializeAnimInstance(const FAnimInstanceProxy* InProxy, const UAnimInstance* InAnimInstance) override;
 	virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
 	virtual void Evaluate_AnyThread(FPoseContext& Output) override;
 	virtual void OverrideAsset(UAnimationAsset* NewAsset) override;
