@@ -52,9 +52,10 @@ UDistanceMatchingComponent::UDistanceMatchingComponent()
 	, ApexSimulationFrequency(5.0f)
 	, LandingSimulationFrequency(5.0f)
 	, MinPivotAngle(150.0f)
-	, DebugDrawTime(1.5f)
 	, TraceChannel(TraceTypeQuery1)
 	, StopLocationTraceHalfHeight(150.0f)
+	, DebugSphereRadius(16.0f)
+	, DebugDrawTime(1.5f)
 	, TraceDrawTime(2.0f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -76,8 +77,8 @@ void UDistanceMatchingComponent::InitializeComponent()
 
 	Character = Cast<ACharacter>(GetOwner());
 
-	MovementComponent = IsValid(Character) ? Character->GetCharacterMovement() : nullptr;
-	CapsuleComponent = IsValid(Character) ? Character->GetCapsuleComponent() : nullptr;
+	MovementComponent = Character ? Character->GetCharacterMovement() : nullptr;
+	CapsuleComponent = Character ? Character->GetCapsuleComponent() : nullptr;
 
 	if (!MovementComponent || !CapsuleComponent)
 	{
@@ -118,7 +119,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 
 	if (bShowDebug)
 	{
-		DrawDebugSphere(World, ActorLocation, 16.0f, 16.0f, FColor::Green, false, -1.0f, 0, 0.3f);
+		DrawDebugSphere(World, ActorLocation, DebugSphereRadius, 16.0f, FColor::Green, false, -1.0f, 0, 0.3f);
 	}
 #endif
 
@@ -135,8 +136,8 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 #if ENABLE_DRAW_DEBUG
 		if (bShowDebug)
 		{
-			DrawDebugSphere(World, PreviousActorLocation, 16.0f, 16.0f, FColor::Green, false, DebugDrawTime, 0, 0.3f);
-			DrawDebugSphere(World, MarkerLocation, 16.0f, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
+			DrawDebugSphere(World, PreviousActorLocation, DebugSphereRadius, 16.0f, FColor::Green, false, DebugDrawTime, 0, 0.3f);
+			DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
 		}
 #endif
 	}
@@ -165,7 +166,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 #if ENABLE_DRAW_DEBUG
 					if (bShowDebug)
 					{
-						DrawDebugSphere(World, MarkerLocation, 16.0f, 16.0f, FColor::Orange, false, DebugDrawTime, 0, 0.3f);
+						DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Orange, false, DebugDrawTime, 0, 0.3f);
 					}
 #endif
 				}
@@ -183,7 +184,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 #if ENABLE_DRAW_DEBUG
 				if (bShowDebug)
 				{
-					DrawDebugSphere(World, MarkerLocation, 16.0f, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
+					DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
 				}
 #endif
 			}
@@ -209,7 +210,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 	{
 		if (DistanceMatchingType == EDistanceMatchingType::Stop || DistanceMatchingType == EDistanceMatchingType::Fall)
 		{
-			DrawDebugSphere(World, MarkerLocation, 16.0f, 16.0f, FColor::Red, false, -1.0f, 0, 0.3f);
+			DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Red, false, -1.0f, 0, 0.3f);
 		}
 		if (bIsMoving)
 		{

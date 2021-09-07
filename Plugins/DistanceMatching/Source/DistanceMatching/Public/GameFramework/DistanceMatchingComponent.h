@@ -82,10 +82,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching", meta = (ClampMin = 0.0f, ClampMax = 180.0f, UIMin = 0.0f, UIMax = 180.0f))
 	float MinPivotAngle;
 
-	/** How long shows debug spheres when debug mode is on. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching", meta = (ClampMin = 0.1f, ClampMax = 10.0f, UIMin = 0.1f, UIMax = 10.0f))
-	float DebugDrawTime;
-
 	/** Channel for all kind of traces used for distance matching. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace")
 	TEnumAsByte<ETraceTypeQuery> TraceChannel;
@@ -98,8 +94,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace", meta = (ClampMin = 100.0f, ClampMax = 1000.0f, UIMin = 100.0f, UIMax = 1000.0f))
 	float StopLocationTraceHalfHeight;
 
+	/** Debug sphere radius for markers. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Debug")
+	float DebugSphereRadius;
+
+	/** How long shows debug spheres when debug mode is on. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Debug", meta = (ClampMin = 0.1f, ClampMax = 10.0f, UIMin = 0.1f, UIMax = 10.0f))
+	float DebugDrawTime;
+
 	/** Debug draw time for all kind of traces used for distance matching. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace", meta = (ClampMin = 0.1f, ClampMax = 10.0f, UIMin = 0.1f, UIMax = 10.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Debug", meta = (ClampMin = 0.1f, ClampMax = 10.0f, UIMin = 0.1f, UIMax = 10.0f))
 	float TraceDrawTime;
 
 private:
