@@ -49,7 +49,7 @@ public:
 
 	/** Continue play animation as normal when distance limit is exceeded. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault))
-	bool bEnableDistanceLimit;
+	uint8 bEnableDistanceLimit : 1;
 
 	/** Distance matching limit. See bEnableDistanceLimit. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinHiddenByDefault, EditCondition = "bEnableDistanceLimit"))

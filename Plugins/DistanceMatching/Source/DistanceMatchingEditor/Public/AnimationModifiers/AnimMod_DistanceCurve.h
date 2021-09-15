@@ -19,7 +19,7 @@ public:
 	FName CurveName;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	bool bIsStartAnimation;
+	uint8 bIsStartAnimation : 1;
 
 	UAnimMod_DistanceCurve();
 
