@@ -15,21 +15,26 @@ enum class EDistanceMatchingType : uint8
 	None,
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FPredictResult
 {
 	GENERATED_BODY()
 
 	/** Predicted marker location. */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FVector Location;
 
+	/** Distance to marker location. */
+	UPROPERTY(BlueprintReadOnly)
+	float Distance;
+
 	/** Time to marker location. */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float Time;
 
 	FPredictResult()
 		: Location(ForceInitToZero)
+		, Distance(0.0f)
 		, Time(0.0f)
 	{
 	}
