@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AnimationModifier.h"
+#include "GameFramework/DistanceMatchingTypes.h"
 #include "AnimMod_DistanceCurve.generated.h"
 
 UCLASS()
@@ -19,7 +20,7 @@ public:
 	FName CurveName;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	uint8 bIsStartAnimation : 1;
+	EDistanceMatchingType DistanceMatchingType;
 
 	UAnimMod_DistanceCurve();
 
@@ -27,5 +28,12 @@ public:
 	virtual void OnRevert_Implementation(UAnimSequence* AnimationSequence) override;
 
 private:
-	FVector GetRootBoneLocationAtFrame(const UAnimSequence* AnimationSequence, const int32 Frame) const;
+	/** Returns location for the root bone at the specified Frame from the given Animation Sequence. */
+	FVector GetRootBoneLocationAtFrame(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 Frame) const;
+
+	/** Returns the frame index with zero distance. */
+	int32 GetStartIndex(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 NumFrames) const;
+
+	/** Sets a distance values in the float curve inside of the given Animation Sequence. */
+	void SetDistanceCurveKeys(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 StartIndex, const int32 EndIndex, const bool bRevert) const;
 };
