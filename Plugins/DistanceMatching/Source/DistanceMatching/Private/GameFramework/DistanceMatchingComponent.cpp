@@ -45,9 +45,6 @@ UDistanceMatchingComponent::UDistanceMatchingComponent()
 	, bIsAccelerating(false)
 	, bIsFalling(false)
 	, DistanceMatchingType(EDistanceMatchingType::None)
-	, MarkerLocation(ForceInitToZero)
-	, DistanceToMarker(0.0f)
-	, TimeToMarker(0.0f)
 	, MaxSimulationTime(2.0f)
 	, ApexSimulationFrequency(5.0f)
 	, LandingSimulationFrequency(5.0f)
@@ -126,30 +123,22 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 	if (DistanceMatchingType != EDistanceMatchingType::Jump && bIsFalling && Velocity.Z > 0.0f)
 	{
 		DistanceMatchingType = EDistanceMatchingType::Jump;
-
-		FPredictResult PredictApexResult;
-		PredictJumpApex(PredictApexResult);
-
-		MarkerLocation = PredictApexResult.Location;
-		TimeToMarker = PredictApexResult.Time;
+		PredictJumpApex(ApexMarker);
+		TakeOffMarker.Location = PreviousActorLocation;
+		TakeOffMarker.Time = 0.0f;
 
 #if ENABLE_DRAW_DEBUG
 		if (bShowDebug)
 		{
-			DrawDebugSphere(World, PreviousActorLocation, DebugSphereRadius, 16.0f, FColor::Green, false, DebugDrawTime, 0, 0.3f);
-			DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
+			DrawDebugSphere(World, TakeOffMarker.Location, DebugSphereRadius, 16.0f, FColor::Green, false, DebugDrawTime, 0, 0.3f);
+			DrawDebugSphere(World, ApexMarker.Location, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
 		}
 #endif
 	}
 	else if (DistanceMatchingType != EDistanceMatchingType::Fall && bIsFalling && Velocity.Z < 0.0f)
 	{
 		DistanceMatchingType = EDistanceMatchingType::Fall;
-
-		FPredictResult PredictLandingResult;
-		PredictLandingLocation(PredictLandingResult);
-
-		MarkerLocation = PredictLandingResult.Location;
-		TimeToMarker = PredictLandingResult.Time;
+		PredictLandingLocation(LandingMarker);
 	}
 	else if (!bIsFalling)
 	{
@@ -160,13 +149,14 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 				DistanceMatchingType = EDistanceMatchingType::Start;
 				if (PreviousAccelerationSize < MOVEMENT_THRESHOLD)
 				{
-					MarkerLocation = PreviousActorLocation;
-					TimeToMarker = 0.0f;
+					StartMarker.Location = PreviousActorLocation;
+					StartMarker.Time = 0.0f;
+					StartMarker.Distance = 0.0f;
 
 #if ENABLE_DRAW_DEBUG
 					if (bShowDebug)
 					{
-						DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Orange, false, DebugDrawTime, 0, 0.3f);
+						DrawDebugSphere(World, StartMarker.Location, DebugSphereRadius, 16.0f, FColor::Orange, false, DebugDrawTime, 0, 0.3f);
 					}
 #endif
 				}
@@ -174,17 +164,12 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 			else if (DistanceMatchingType != EDistanceMatchingType::Pivot && (Velocity.GetSafeNormal() | Acceleration.GetSafeNormal()) <= -(MinPivotAngle / 180.0f))
 			{
 				DistanceMatchingType = EDistanceMatchingType::Pivot;
-
-				FPredictResult PredictPivotResult;
-				PredictStopLocation(PredictPivotResult, DeltaTime);
-
-				MarkerLocation = PredictPivotResult.Location;
-				TimeToMarker = PredictPivotResult.Time;
+				PredictStopLocation(PivotMarker, DeltaTime);
 
 #if ENABLE_DRAW_DEBUG
 				if (bShowDebug)
 				{
-					DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
+					DrawDebugSphere(World, PivotMarker.Location, DebugSphereRadius, 16.0f, FColor::Purple, false, DebugDrawTime, 0, 0.3f);
 				}
 #endif
 			}
@@ -192,12 +177,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 		else if (DistanceMatchingType != EDistanceMatchingType::Stop && bIsMoving && !bIsAccelerating)
 		{
 			DistanceMatchingType = EDistanceMatchingType::Stop;
-
-			FPredictResult PredictStopResult;
-			PredictStopLocation(PredictStopResult, DeltaTime);
-
-			MarkerLocation = PredictStopResult.Location;
-			TimeToMarker = PredictStopResult.Time;
+			PredictStopLocation(StopMarker, DeltaTime);
 		}
 		else if (!bIsMoving && !bIsAccelerating)
 		{
@@ -208,9 +188,13 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 #if ENABLE_DRAW_DEBUG
 	if (bShowDebug)
 	{
-		if (DistanceMatchingType == EDistanceMatchingType::Stop || DistanceMatchingType == EDistanceMatchingType::Fall)
+		if (DistanceMatchingType == EDistanceMatchingType::Stop)
 		{
-			DrawDebugSphere(World, MarkerLocation, DebugSphereRadius, 16.0f, FColor::Red, false, -1.0f, 0, 0.3f);
+			DrawDebugSphere(World, StopMarker.Location, DebugSphereRadius, 16.0f, FColor::Red, false, -1.0f, 0, 0.3f);
+		}
+		else if (DistanceMatchingType == EDistanceMatchingType::Fall)
+		{
+			DrawDebugSphere(World, LandingMarker.Location, DebugSphereRadius, 16.0f, FColor::Red, false, -1.0f, 0, 0.3f);
 		}
 		if (bIsMoving)
 		{
@@ -219,27 +203,46 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 	}
 #endif
 
-	// Update distance to marker
-	DistanceToMarker = DistanceMatchingType == EDistanceMatchingType::None
-						   ? 0.0f
-						   : FMath::Clamp(FVector::Distance(ActorLocation, MarkerLocation), -MAX_MARKER_VALUE, MAX_MARKER_VALUE);
-
-	if (DistanceMatchingType == EDistanceMatchingType::Stop || DistanceMatchingType == EDistanceMatchingType::Pivot)
-	{
-		DistanceToMarker *= -1.0f;
-	}
-
-	// Update time to marker
+	// Update distance and time to marker
 	switch (DistanceMatchingType)
 	{
-		case EDistanceMatchingType::None:
-			TimeToMarker = 0.0f;
-			break;
 		case EDistanceMatchingType::Start:
-			TimeToMarker += DeltaTime;
+			StartMarker.Distance = FMath::Clamp(FVector::Distance(ActorLocation, StartMarker.Location), -MAX_MATCH_VALUE, MAX_MATCH_VALUE);
+			StartMarker.Time = FMath::Clamp(StartMarker.Time + DeltaTime, 0.0f, MAX_MATCH_VALUE);
 			break;
-		default:
-			TimeToMarker = FMath::Clamp(TimeToMarker - DeltaTime, 0.0f, MAX_MARKER_VALUE);
+		case EDistanceMatchingType::Stop:
+			StopMarker.Distance = FMath::Clamp(FVector::Distance(ActorLocation, StopMarker.Location), -MAX_MATCH_VALUE, MAX_MATCH_VALUE) * -1.0f;
+			StopMarker.Time = FMath::Clamp(StopMarker.Time - DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			break;
+		case EDistanceMatchingType::Pivot:
+			PivotMarker.Distance = FMath::Clamp(FVector::Distance(ActorLocation, PivotMarker.Location), -MAX_MATCH_VALUE, MAX_MATCH_VALUE) * -1.0f;
+			PivotMarker.Time = FMath::Clamp(PivotMarker.Time - DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			break;
+		case EDistanceMatchingType::Jump:
+			TakeOffMarker.Distance = FMath::Clamp(ActorLocation.Z - TakeOffMarker.Location.Z, 0.0f, ApexMarker.Location.Z - TakeOffMarker.Location.Z);
+			ApexMarker.Distance = FMath::Clamp(ApexMarker.Location.Z - ActorLocation.Z, 0.0f, ApexMarker.Location.Z - - TakeOffMarker.Location.Z) * -1.0f;
+			TakeOffMarker.Time = FMath::Clamp(TakeOffMarker.Time + DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			ApexMarker.Time = FMath::Clamp(ApexMarker.Time - DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			break;
+		case EDistanceMatchingType::Fall:
+			ApexMarker.Distance = FMath::Clamp(ApexMarker.Location.Z - ActorLocation.Z, 0.0f, ApexMarker.Location.Z - LandingMarker.Location.Z);
+			LandingMarker.Distance = FMath::Clamp((ActorLocation.Z - LandingMarker.Location.Z) * -1.0f, -ApexMarker.Location.Z, 0.0f);
+			ApexMarker.Time = FMath::Clamp(ApexMarker.Time + DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			LandingMarker.Time = FMath::Clamp(LandingMarker.Time - DeltaTime, 0.0f, MAX_MATCH_VALUE);
+			break;
+		case EDistanceMatchingType::None:
+			StartMarker.Distance = 0.0f;
+			StopMarker.Distance = 0.0f;
+			PivotMarker.Distance = 0.0f;
+			TakeOffMarker.Distance = 0.0f;
+			ApexMarker.Distance = 0.0f;
+			LandingMarker.Distance = 0.0f;
+			StartMarker.Time = 0.0f;
+			StopMarker.Time = 0.0f;
+			PivotMarker.Time = 0.0f;
+			TakeOffMarker.Time = 0.0f;
+			ApexMarker.Time = 0.0f;
+			LandingMarker.Time = 0.0f;
 			break;
 	}
 }

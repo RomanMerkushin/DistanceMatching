@@ -6,8 +6,8 @@
 #include "GameFramework/DistanceMatchingTypes.h"
 #include "DistanceMatchingComponent.generated.h"
 
-// Max DistanceToMarker or TimeToMarker value to prevent float overflow.
-#define MAX_MARKER_VALUE (1000.0f)
+// Maximum distance or time value to prevent float overflow.
+#define MAX_MATCH_VALUE (1000.0f)
 // Minimum value to determine if character moving or accelerating.
 #define MOVEMENT_THRESHOLD (0.00001f)
 
@@ -61,12 +61,15 @@ protected:
 	TObjectPtr<UCharacterMovementComponent> MovementComponent;
 
 	EDistanceMatchingType DistanceMatchingType;
-	FVector MarkerLocation;
-	float DistanceToMarker;
-	float TimeToMarker;
+	FPredictResult StartMarker;
+	FPredictResult StopMarker;
+	FPredictResult PivotMarker;
+	FPredictResult TakeOffMarker;
+	FPredictResult ApexMarker;
+	FPredictResult LandingMarker;
 
 public:
-	/** Maximum simulation time for the stop or pivot location prediction. */
+	/** Maximum simulation time for the stop/pivot location or jump path predictions. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching", meta = (ClampMin = 0.1f, ClampMax = 5.0f, UIMin = 0.1f, UIMax = 5.0f))
 	float MaxSimulationTime;
 
@@ -88,7 +91,7 @@ public:
 
 	/** Actors which will be ignored for all kind of traces used for distance matching. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace")
-	TArray<AActor*> ActorsToIgnore;
+	TArray<TObjectPtr<AActor>> ActorsToIgnore;
 
 	/** Half height of capsule trace for Z value correction when predicting stop location on a slope. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace", meta = (ClampMin = 100.0f, ClampMax = 1000.0f, UIMin = 100.0f, UIMax = 1000.0f))
@@ -147,11 +150,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
 	FORCEINLINE EDistanceMatchingType GetDistanceMatchingType() const { return DistanceMatchingType; }
 
-	/** Returns the distance remaining to marker location (can be positive in case of distance to start marker or negative in other cases). */
+	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE float GetDistanceToMarker() const { return DistanceToMarker; }
+	FORCEINLINE FPredictResult GetStartMarker() const { return StartMarker; }
 
-	/** Returns the time to reach the marker location. */
+	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE float GetTimeToMarker() const { return TimeToMarker; }
+	FORCEINLINE FPredictResult GetStopMarker() const { return StopMarker; }
+
+	/** Returns a struct with location, distance and time to marker. */
+	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
+	FORCEINLINE FPredictResult GetPivotMarker() const { return PivotMarker; }
+
+	/** Returns a struct with location, distance and time to marker. */
+	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
+	FORCEINLINE FPredictResult GetTakeOffMarker() const { return TakeOffMarker; }
+
+	/** Returns a struct with location, distance and time to marker. */
+	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
+	FORCEINLINE FPredictResult GetApexMarker() const { return ApexMarker; }
+
+	/** Returns a struct with location, distance and time to marker. */
+	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
+	FORCEINLINE FPredictResult GetLandingMarker() const { return LandingMarker; }
 };
