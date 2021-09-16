@@ -42,6 +42,9 @@ public:
 
 	// UAnimGraphNode_AssetPlayerBase interface
 	virtual void SetAnimationAsset(UAnimationAsset* Asset) override;
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 25
+	virtual void OnProcessDuringCompilation(IAnimBlueprintCompilationContext& InCompilationContext, IAnimBlueprintGeneratedClassCompiledData& OutCompiledData) override;
+#endif
 	// End of UAnimGraphNode_AssetPlayerBase interface
 
 private:

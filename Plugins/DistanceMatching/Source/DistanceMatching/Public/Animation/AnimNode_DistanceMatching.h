@@ -31,13 +31,14 @@ struct DISTANCEMATCHING_API FAnimNode_DistanceMatching : public FAnimNode_AssetP
 private:
 	TSharedPtr<FAnimCurveBufferAccess> CurveBuffer;
 	int32 CurveBufferNumSamples;
-	TObjectPtr<UAnimSequenceBase> PrevSequence;
+	UPROPERTY()
+	UAnimSequenceBase* PrevSequence;
 	uint8 bIsEnabled : 1;
 
 public:
 	/** The animation sequence asset to play. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinShownByDefault, DisallowedClasses = "AnimMontage"))
-	TObjectPtr<UAnimSequenceBase> Sequence;
+	UAnimSequenceBase* Sequence;
 
 	/** The distance value to search in curve. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (PinShownByDefault))

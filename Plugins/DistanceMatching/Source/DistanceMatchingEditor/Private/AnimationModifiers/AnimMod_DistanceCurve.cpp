@@ -52,7 +52,7 @@ void UAnimMod_DistanceCurve::OnRevert_Implementation(UAnimSequence* AnimationSeq
 	UAnimationBlueprintLibrary::RemoveCurve(AnimationSequence, CurveName, false);
 }
 
-FVector UAnimMod_DistanceCurve::GetRootBoneLocationAtFrame(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 Frame) const
+FVector UAnimMod_DistanceCurve::GetRootBoneLocationAtFrame(const UAnimSequence* AnimationSequence, const int32 Frame) const
 {
 	FTransform Pose;
 	UAnimationBlueprintLibrary::GetBonePoseForFrame(AnimationSequence, RootBoneName, Frame, true, Pose);
@@ -60,7 +60,7 @@ FVector UAnimMod_DistanceCurve::GetRootBoneLocationAtFrame(const TObjectPtr<UAni
 	return Pose.GetLocation();
 }
 
-int32 UAnimMod_DistanceCurve::GetStartIndex(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 NumFrames) const
+int32 UAnimMod_DistanceCurve::GetStartIndex(const UAnimSequence* AnimationSequence, const int32 NumFrames) const
 {
 	if (DistanceMatchingType != EDistanceMatchingType::Pivot)
 	{
@@ -83,7 +83,7 @@ int32 UAnimMod_DistanceCurve::GetStartIndex(const TObjectPtr<UAnimSequence> Anim
 	return 0;
 }
 
-void UAnimMod_DistanceCurve::SetDistanceCurveKeys(const TObjectPtr<UAnimSequence> AnimationSequence, const int32 StartIndex, const int32 EndIndex, const bool bRevert) const
+void UAnimMod_DistanceCurve::SetDistanceCurveKeys(UAnimSequence* AnimationSequence, const int32 StartIndex, const int32 EndIndex, const bool bRevert) const
 {
 	const FVector StartLocation = GetRootBoneLocationAtFrame(AnimationSequence, StartIndex);
 	const FVector EndLocation = GetRootBoneLocationAtFrame(AnimationSequence, EndIndex);

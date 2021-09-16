@@ -99,7 +99,7 @@ void UAnimGraphNode_DistanceMatching::BakeDataDuringCompilation(FCompilerResults
 	AnimBlueprint->FindOrAddGroup(SyncGroup.GroupName);
 	Node.GroupName = SyncGroup.GroupName;
 	Node.GroupRole = SyncGroup.GroupRole;
-	Node.Method = SyncGroup.Method;
+	Node.GroupScope = SyncGroup.GroupScope;
 }
 
 UAnimationAsset* UAnimGraphNode_DistanceMatching::GetAnimationAsset() const
@@ -154,6 +154,13 @@ void UAnimGraphNode_DistanceMatching::SetAnimationAsset(UAnimationAsset* Asset)
 		Node.Sequence = Seq;
 	}
 }
+
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION > 25
+void UAnimGraphNode_DistanceMatching::OnProcessDuringCompilation(IAnimBlueprintCompilationContext& InCompilationContext, IAnimBlueprintGeneratedClassCompiledData& OutCompiledData)
+{
+	// In UE 4.26 and 4.27 AnimGraphNode_AssetPlayerBase type has override for OnProcessDuringCompilation which is not API exported, this is causing a linking failure.
+}
+#endif
 
 void UAnimGraphNode_DistanceMatching::UpdateNodeTitleForSequence(const ENodeTitleType::Type TitleType, const UAnimSequenceBase* InSequence) const
 {

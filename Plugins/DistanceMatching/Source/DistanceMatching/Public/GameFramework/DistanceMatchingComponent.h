@@ -49,16 +49,16 @@ private:
 
 protected:
 	UPROPERTY(Transient)
-	TObjectPtr<UWorld> World;
+	UWorld* World;
 
 	UPROPERTY(Transient)
-	TObjectPtr<ACharacter> Character;
+	ACharacter* Character;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UCapsuleComponent> CapsuleComponent;
+	UCapsuleComponent* CapsuleComponent;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UCharacterMovementComponent> MovementComponent;
+	UCharacterMovementComponent* MovementComponent;
 
 	EDistanceMatchingType DistanceMatchingType;
 	FPredictResult StartMarker;
@@ -91,7 +91,7 @@ public:
 
 	/** Actors which will be ignored for all kind of traces used for distance matching. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace")
-	TArray<TObjectPtr<AActor>> ActorsToIgnore;
+	TArray<AActor*> ActorsToIgnore;
 
 	/** Half height of capsule trace for Z value correction when predicting stop location on a slope. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DistanceMatching|Trace", meta = (ClampMin = 100.0f, ClampMax = 1000.0f, UIMin = 100.0f, UIMax = 1000.0f))
