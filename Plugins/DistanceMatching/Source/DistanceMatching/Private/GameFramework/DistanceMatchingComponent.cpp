@@ -220,7 +220,7 @@ void UDistanceMatchingComponent::TickComponent(const float DeltaTime, const ELev
 			break;
 		case EDistanceMatchingType::Jump:
 			TakeOffMarker.Distance = FMath::Clamp(ActorLocation.Z - TakeOffMarker.Location.Z, 0.0f, ApexMarker.Location.Z - TakeOffMarker.Location.Z);
-			ApexMarker.Distance = FMath::Clamp(ApexMarker.Location.Z - ActorLocation.Z, 0.0f, ApexMarker.Location.Z - - TakeOffMarker.Location.Z) * -1.0f;
+			ApexMarker.Distance = FMath::Clamp(ApexMarker.Location.Z - ActorLocation.Z, 0.0f, ApexMarker.Location.Z - TakeOffMarker.Location.Z) * -1.0f;
 			TakeOffMarker.Time = FMath::Clamp(TakeOffMarker.Time + DeltaTime, 0.0f, MAX_MATCH_VALUE);
 			ApexMarker.Time = FMath::Clamp(ApexMarker.Time - DeltaTime, 0.0f, MAX_MATCH_VALUE);
 			break;
