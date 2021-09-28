@@ -136,25 +136,25 @@ private:
 public:
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetStartMarker() const { return StartMarker; }
+	FPredictResult GetStartMarker() const { return StartMarker; }
 
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetStopMarker() const { return StopMarker; }
+	FPredictResult GetStopMarker() const { return StopMarker; }
 
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetPivotMarker() const { return PivotMarker; }
+	FPredictResult GetPivotMarker() const { return PivotMarker; }
 
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetTakeOffMarker() const { return TakeOffMarker; }
+	FPredictResult GetTakeOffMarker() const { return TakeOffMarker; }
 
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetApexMarker() const { return ApexMarker; }
+	FPredictResult GetApexMarker() const { return ApexMarker; }
 
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE FPredictResult GetLandingMarker() const { return LandingMarker; }
+	FPredictResult GetLandingMarker() const { return LandingMarker; }
 };
