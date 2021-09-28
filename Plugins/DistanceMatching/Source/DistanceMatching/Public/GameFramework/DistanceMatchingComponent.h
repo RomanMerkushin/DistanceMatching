@@ -134,22 +134,6 @@ private:
 	void PredictLandingLocation(FPredictResult& PredictResult) const;
 
 public:
-	/** Returns true, if character speed is greater than zero. */
-	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE bool IsMoving() const { return bIsMoving; }
-
-	/** Returns true, if character acceleration is greater than zero. */
-	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE bool IsAccelerating() const { return bIsAccelerating; }
-
-	/** Returns true if currently falling (not flying, in a non-fluid volume, and not on the ground). */
-	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE bool IsFalling() const { return bIsFalling; }
-
-	/** Returns current type of distance matching. */
-	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
-	FORCEINLINE EDistanceMatchingType GetDistanceMatchingType() const { return DistanceMatchingType; }
-
 	/** Returns a struct with location, distance and time to marker. */
 	UFUNCTION(BlueprintCallable, Category = "DistanceMatching")
 	FORCEINLINE FPredictResult GetStartMarker() const { return StartMarker; }
