@@ -1,4 +1,8 @@
- # Distance Matching
+<p align="center">
+    <img width="192" height="192" src="https://github.com/romanus-severus/DistanceMatching/raw/main/DM_Plugin.png">
+</p>
+
+# Distance Matching
  
 This plug-in is custom implementation of the [Distance Matching technique](https://www.youtube.com/watch?v=YlKA22Hzerk) which was shown by Laurent Delayen at Nucl.ai 2016.
 In two words, Distance Matching plays the animation frame which corresponds to the distance to marker location (start, stop, pivot, etc.).
