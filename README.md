@@ -2,9 +2,6 @@
     <img width="192" height="192" src="https://github.com/romanus-severus/DistanceMatching/raw/main/DM_Plugin.png">
 </p>
 
-[![PayPal](https://github.com/Rageware/Shields/blob/master/paypal.svg)](https://www.paypal.me/rmerkushin)
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q46L8NQ)
-
 # Distance Matching
  
 This plug-in is custom implementation of the [Distance Matching technique](https://www.youtube.com/watch?v=YlKA22Hzerk) which was shown by Laurent Delayen at Nucl.ai 2016.
