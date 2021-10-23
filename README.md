@@ -20,7 +20,7 @@ Target engine version for this plug-in is UE5, for UE4 see 4.27 branch.
 - `Use Separate Braking Friction` should be disabled (when it's enabled, air resistance will be applied, it will complicate the jump apex and landing prediction).
 
 ### Installation:
-> For Blueprint projects you should add any C++ class to your project.
+> For Blueprint project you should add any C++ class.
 
 1. Close Unreal Engine editor.
 2. Copy DistanceMatching directory to the Plugins folder at the root of the project.
