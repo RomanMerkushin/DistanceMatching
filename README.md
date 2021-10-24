@@ -27,6 +27,8 @@ In two words, Distance Matching plays the animation frame which corresponds to t
 4. Open Visual Studio solution file and compile it.
 5. Open your project and enable the DistanceMatching plugin.
 
+[How to use Distance Matching plugin](https://www.youtube.com/watch?v=47ckE8c28-0)
+
 ### How To Contribute:
 - Create a personal fork of the project on Github.
 - Clone the fork on your local machine. Your remote repo on Github is called `origin`.
