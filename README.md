@@ -24,7 +24,7 @@ Target engine version for this plug-in is UE5, for UE4 see 4.27 branch.
 
 1. Close Unreal Engine editor.
 2. Copy DistanceMatching directory to the Plugins folder at the root of the project.
-3. ReGenerate the Visual Studio project files.
+3. Regenerate the Visual Studio project files.
 4. Open Visual Studio solution file and compile it.
 5. Open your project and enable the DistanceMatching plugin.
 
